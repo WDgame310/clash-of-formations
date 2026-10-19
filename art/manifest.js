@@ -193,5 +193,37 @@ GAME.ART = {
   "fx": 0.4741,
   "fy": 0.3317,
   "fz": 4.0
+ },
+ "m_cult": {
+  "src": "art/heroes/m_cult.webp",
+  "v": 1272996593,
+  "ar": 0.6682,
+  "fx": 0.51,
+  "fy": 0.335,
+  "fz": 4.4
+ },
+ "m_gun": {
+  "src": "art/heroes/m_gun.webp",
+  "v": 3131119612,
+  "ar": 0.7545,
+  "fx": 0.385,
+  "fy": 0.175,
+  "fz": 3.8
+ },
+ "m_shield": {
+  "src": "art/heroes/m_shield.webp",
+  "v": 335581835,
+  "ar": 0.8155,
+  "fx": 0.496,
+  "fy": 0.264,
+  "fz": 3.8
+ },
+ "m_star": {
+  "src": "art/heroes/m_star.webp",
+  "v": 3088622265,
+  "ar": 0.6364,
+  "fx": 0.493,
+  "fy": 0.205,
+  "fz": 4.4
  }
 };

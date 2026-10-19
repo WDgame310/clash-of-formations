@@ -87,14 +87,14 @@ GAME.I18N.add('fr', {
       <h2>2. Déploiement secret</h2>
       <p>Parmi vos 5 héros et les sbires, placez en secret vos unités sur votre terrain de 2x2 (2 cases en première ligne, 2 cases en seconde ligne). Coût total de 10 maximum, 4 unités maximum. Les deux camps révèlent leur formation en même temps.</p>
       <h2>3. Actions secrètes</h2>
-      <p>Chaque manche, vous avez 3 PA (les PA non dépensés sont perdus). Touchez un de vos personnages, choisissez une carte, puis une cible. Un personnage peut jouer plusieurs cartes différentes dans la même manche (par exemple « Pas éclair + Entaille »), mais chaque carte ne peut être jouée qu'une fois par manche. Quand les deux joueurs ont validé, tout est révélé en même temps.</p>
+      <p>Chaque manche, vous avez 3 PA (jusqu'à 1 PA non dépensé est gardé pour la manche suivante ; voir « Mettre de côté des PA » ci-dessous). Touchez un de vos personnages, choisissez une carte, puis une cible. Un personnage peut jouer plusieurs cartes différentes dans la même manche (par exemple « Pas éclair + Entaille »), mais chaque carte ne peut être jouée qu'une fois par manche. Quand les deux joueurs ont validé, tout est révélé en même temps.</p>
       <p><b>Vitesse :</b> vitesse du personnage + bonus de vitesse de la carte = vitesse totale ; le plus rapide agit en premier. À vitesse égale, les actions se résolvent en même temps (un personnage mis K.O. par un adversaire aussi rapide agit quand même). Si le plus lent est mis K.O. ou subit Gel/Étourdissement avant d'agir, sa carte échoue et les PA ne sont pas rendus.</p>
       <p>Les <b>cartes d'Anticipation et de défense</b> (marquées « Anticipation » : Bouclier, esquive, Provocation, Interdit…) s'appliquent avant toutes les attaques.</p>
       <h2>Des règles pour plus de stratégie</h2>
       <ul>
         <li>⏳ <b>Inutilisable deux manches de suite</b> : sauf les cartes marquées « De base », une carte jouée doit se reposer à la manche suivante (une carte confisquée ou interrompue avant d'agir ne compte pas). Les ⏳ de l'adversaire sont visibles aussi : vous pouvez deviner ce qu'il ne pourra pas jouer cette manche.</li>
         <li>🔰 <b>Garde</b> (tous les personnages, 1 PA, Anticipation) : les dégâts subis cette manche sont réduits de moitié (sauf les dégâts purs).</li>
-        <li>🔄 <b>Permutation</b> (tous les personnages, 1 PA) : échange sa place avant/arrière avec la case de la même colonne. Pratique pour esquiver la mêlée ou cacher un attaquant en seconde ligne. Avec les règles de base, la Permutation est une Anticipation qui s'applique avant toutes les attaques ; avec les « Règles de placement (version numérique) » ci-dessous, elle se résout dans l'ordre de vitesse. Le Géant des Montagnes ne peut ni permuter ni être permuté ; impossible de permuter sous Gel ou Étourdissement.</li>
+        <li>🔄 <b>Permutation</b> (tous les personnages, 1 PA) : échange sa place avant/arrière avec la case de la même colonne. Pratique pour esquiver la mêlée ou cacher un attaquant en seconde ligne. La Permutation se résout dans l'ordre de vitesse : il faut être plus rapide que l'attaquant pour lui échapper (voir les « Règles de placement » ci-dessous). Le Géant des Montagnes ne peut ni permuter ni être permuté ; impossible de permuter sous Gel ou Étourdissement.</li>
         <li>💰 <b>Mettre de côté des PA</b> : jusqu'à 1 PA non dépensé est gardé pour la manche suivante (4 PA maximum). Pratique pour jouer une grosse carte à 3 PA + une carte à 1 PA dans la même manche.</li>
         <li>📊 <b>Ordre d'action</b> : au milieu de l'écran de choix des actions, l'ordre d'action prévu s'affiche et se met à jour dès que vous choisissez une carte qui donne de la vitesse.</li>
       </ul>
@@ -237,6 +237,7 @@ GAME.I18N.add('fr', {
     st_cd_title: "En récupération : {list}",
     fx_miss: "Esquive",
     bubble_card: "[{card}]",
+    bubble_simul: "⚡ Même instant",
 
     // ---------- Choix des actions ----------
     why_cant: "Inutilisable pour le moment",

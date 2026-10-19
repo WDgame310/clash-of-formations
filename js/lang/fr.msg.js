@@ -143,6 +143,7 @@ GAME.I18N.add('fr', { msg: {
   card_confiscated: "{unit} se fait confisquer [{card}]",
   controlled_fail: "{unit} est sous contrôle : la carte échoue (PA non rendus)",
   down_before_act: "{unit} est K.O. avant d'agir : la carte échoue",
+  same_speed_strike: "⚡ Même vitesse, même instant : {unit} frappe en tombant, et l'attaque compte quand même",
   jail_blocked: "La Prison d'encre bloque {unit} : [{card}] échoue",
   use_card: "{unit} utilise [{card}]",
   // Bonus de dégâts

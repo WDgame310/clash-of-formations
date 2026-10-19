@@ -88,14 +88,14 @@ GAME.I18N.add('en', {
       <h2>2. Blind Deploy</h2>
       <p>From your 5 heroes and the minions, secretly place units on your 2x2 formation (2 front-row squares, 2 back-row squares). Total Cost can't be over 10, with at most 4 units. Both sides are revealed at the same time.</p>
       <h2>3. Plan Moves in Secret</h2>
-      <p>Each round you have 3 AP (unused AP is not kept). Tap your own character, choose a card, then choose a target. A character can use several different cards in the same round (for example "Sidestep + Slash"), but each card can only be used once per round. When both players confirm, the moves are revealed at the same time.</p>
+      <p>Each round you have 3 AP (up to 1 unused AP carries over to the next round; see "Save AP" below). Tap your own character, choose a card, then choose a target. A character can use several different cards in the same round (for example "Sidestep + Slash"), but each card can only be used once per round. When both players confirm, the moves are revealed at the same time.</p>
       <p><b>Speed check:</b> character speed + card speed bonus = total speed, and the faster one acts first. Units with the same speed resolve at the same time (a unit knocked out by an opponent with the same speed still acts). If the slower side is knocked out, Frozen or Stunned before it acts, its cards fail and the AP is not refunded.</p>
       <p><b>Predict and defensive cards</b> (marked "Predict", such as Shield, dodge, Taunt and Decree) take effect before all attacks.</p>
       <h2>Rules That Make Battles More Strategic</h2>
       <ul>
         <li>⏳ <b>Can't be used two rounds in a row</b>: except for cards marked "Basic", a card you used must rest next round (cards that were confiscated or interrupted before they were really used don't count). You can see your opponent's ⏳ too, so you can predict what they can't use this round.</li>
         <li>🔰 <b>Guard</b> (every character has it, 1 AP, Predict): take half damage this round (except true damage).</li>
-        <li>🔄 <b>Swap</b> (every character has it, 1 AP): swap front/back places within the same column, so you can dodge melee attacks or hide your damage dealers in the back row. Under the basic rules, Swap is a Predict card and takes effect before all attacks; with the "Position Rules (digital edition)" below, it resolves in speed order instead. The Mountain Giant can't swap or be swapped; units with Freeze or Stun can't swap.</li>
+        <li>🔄 <b>Swap</b> (every character has it, 1 AP): swap front/back places within the same column, so you can dodge melee attacks or hide your damage dealers in the back row. Swap resolves in speed order: you must be faster than the attacker to get away (see the Position Rules below). The Mountain Giant can't swap or be swapped; units with Freeze or Stun can't swap.</li>
         <li>💰 <b>Save AP</b>: up to 1 unused AP carries over to next round (max 4 AP), so you can save up to play a 3 AP big card + a 1 AP card in the same round.</li>
         <li>📊 <b>Turn order</b>: the middle of the planning screen shows the predicted turn order, and it updates right away when you choose speed-boosting cards.</li>
       </ul>
@@ -238,6 +238,7 @@ GAME.I18N.add('en', {
     st_cd_title: "Cooldown: {list}",
     fx_miss: "Dodge", // floating text
     bubble_card: "[{card}]", // speech bubble above the unit when it plays a card
+    bubble_simul: "⚡ Same moment", // bubble when a unit knocked out by a same-speed enemy still strikes
 
     // ---------- Plan moves ----------
     why_cant: "Can't use this now",

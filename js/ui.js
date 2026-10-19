@@ -412,7 +412,7 @@
   }
   const holdFor = (e, next) => {
     if (e.k === 'dmg' && next && next.k === 'dmg' && next.a === e.a && e.a !== undefined) return 300;
-    return { phase: 1000, act: 650, dmg: 750, heal: 650, shield: 600, miss: 700, death: 1050, status: 700, move: 750, summon: 750 }[e.k] || 850;
+    return { phase: 1000, act: 650, simul: 1400, dmg: 750, heal: 650, shield: 600, miss: 700, death: 1050, status: 700, move: 750, summon: 750 }[e.k] || 850;
   };
   function cardOf(i) {
     const evs = ui.pb.events, e = evs[i];
@@ -458,6 +458,11 @@
         SFX.play('click');
         break;
       }
+      case 'simul':
+        // 同速同時結算：被同速的對手擊倒，但在同一瞬間出手 → 在他的位置標示「同時出手」
+        if (el) { FX.bubble(el, t('bubble_simul')); FX.ring(el, 'act'); }
+        SFX.play('click');
+        break;
       case 'dmg': {
         if (!el) break;
         const big = e.n >= 35;

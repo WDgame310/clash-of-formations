@@ -145,6 +145,7 @@ GAME.I18N.add('en', { msg: {
   card_confiscated: "{unit}'s [{card}] has been confiscated",
   controlled_fail: "{unit} is controlled; its cards fail (AP not refunded)",
   down_before_act: "{unit} was knocked out before acting; its cards fail",
+  same_speed_strike: "⚡ Same speed, same moment: {unit} strikes as it falls, and the attack still counts",
   jail_blocked: "{unit} is locked in the Black Hair Cage; [{card}] fails",
   use_card: "{unit} uses [{card}]",
   // Damage boosts

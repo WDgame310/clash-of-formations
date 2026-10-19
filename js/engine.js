@@ -184,6 +184,8 @@
     card_confiscated: '{unit}【{card}】已被沒收',
     controlled_fail: '{unit} 被控制，招式失效（AP不退還）',
     down_before_act: '{unit} 在出手前倒下，招式失效',
+    // 同速同時結算：被同速的對手擊倒，但在倒下的同一瞬間出手（規則書：速度相同則傷害同時結算）
+    same_speed_strike: '⚡ 同速同時結算：{unit} 在倒下的同一瞬間出手，這一擊照樣生效',
     jail_blocked: '{unit} 被黑髮牢鎖住，【{card}】失效',
     use_card: '{unit} 使用【{card}】',
     // 傷害加成
@@ -1050,6 +1052,8 @@
           }
           return;
         }
+        // 同速同時結算：這個速度組開始時還活著、但輪到他之前已經被同速的對手擊倒 → 照樣出手（規則書：速度相同則傷害同時結算）
+        const downAtStart = !u.alive;
         for (const a of list) {
           if (a.cancelled) { ev(S, { k: 'miss', a: u.uid, t: M('card_confiscated', { unit: nm(u), card: cn(a.c) }) }); continue; }
           // 黑髮牢：只限制比上鎖更晚的速度組（同速同時出手不受影響）；AP 上限也算入本回合已出的招（含預判）
@@ -1058,10 +1062,17 @@
             if (spent + a.cost > 1) { ev(S, { k: 'miss', a: u.uid, t: M('jail_blocked', { unit: nm(u), card: cn(a.c) }) }); continue; }
           }
           if (!u.alive && !okAtStart.has(u)) break;
+          // 先說明再出手，不然播放時看起來像倒下的角色在打人
+          if (downAtStart && !u.r.simulLogged) {
+            u.r.simulLogged = true;
+            ev(S, { k: 'simul', a: u.uid, b: u.uid, t: M('same_speed_strike', { unit: nm(u) }) });
+          }
+          const aliveBefore = u.alive;
           exec(S, a);
           breakJail(S, a);
-          // swapSpeed：自己換位踩進陷阱／火焰倒下 → 剩下的招式不再出手（跟換位在預判階段時一樣）
-          if (a.c.id === 'x_move' && !u.alive) {
+          // 自己的招式害自己倒下（空血爆發、血化蝙蝠扣血、冰之環繞反傷、swapSpeed 換位踩進陷阱／火焰）
+          // → 剩下的招式不再出手；同速同時結算只適用於「被同速的對手」擊倒
+          if (aliveBefore && !u.alive) {
             if (list.indexOf(a) < list.length - 1 && !u.r.missLogged) {
               u.r.missLogged = true;
               ev(S, { k: 'miss', a: u.uid, t: M('down_before_act', { unit: nm(u) }) });

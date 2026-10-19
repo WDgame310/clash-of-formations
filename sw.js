@@ -1,4 +1,4 @@
-// 發佈版：由 tools/build_pwa.py 從專案根目錄的 sw.js 產生（版本 5040e4fbbe66），請改範本後重新 build，不要直接改這個檔。
+// 發佈版：由 tools/build_pwa.py 從專案根目錄的 sw.js 產生（版本 7c490e58c93d），請改範本後重新 build，不要直接改這個檔。
 // 異陣對決：Service Worker（安裝成 App 之後，同一台裝置的模式離線也能玩：輪流玩、對戰電腦、圖鑑、筆記）
 //
 // 兩種版本：
@@ -22,10 +22,10 @@
 // - 其他同網域的檔案（不在清單裡）：先給存下的、同時在背景更新；遊戲頁以外的其他頁面：先抓網路、斷線用存下的。
 'use strict';
 
-const VERSION = '5040e4fbbe66';   // 由 tools/build_pwa.py 產生
+const VERSION = '7c490e58c93d';   // 由 tools/build_pwa.py 產生
 const PRECACHE = [
-  ["index.html", "b65764b6e2186240"],
-  ["art/manifest.js", "6892d3ca5b7ab145"],
+  ["index.html", "3a8124604b7e12a1"],
+  ["art/manifest.js", "4ddfd65e57a75b0e"],
   ["art/prompts.js", "f90dc6e281b72347"],
   ["css/cards.css", "89442767484f9080"],
   ["icons/apple-touch-icon.png", "2b2bc5721dc073db"],
@@ -35,25 +35,25 @@ const PRECACHE = [
   ["icons/icon-512.png", "2b682aa57648338d"],
   ["icons/maskable-512.png", "4d1dec943f0f3d61"],
   ["js/ai.js", "576dfa9e1d8a2fa9"],
-  ["js/codex.js", "11d69ac9fb3f2df2"],
+  ["js/codex.js", "16bbec13eb20b6dd"],
   ["js/data.js", "9238d8b1a2503779"],
-  ["js/engine.js", "0b74c0199fd0c679"],
+  ["js/engine.js", "9b7b673e592fdded"],
   ["js/fx.js", "f772f062c7a01d09"],
   ["js/i18n.js", "d0904aba7d1bb6fb"],
-  ["js/lang/en.codex.js", "9e00d5c23a2c8235"],
+  ["js/lang/en.codex.js", "b05a2e8d2407a52f"],
   ["js/lang/en.data.js", "78a53804d89cdd0c"],
-  ["js/lang/en.msg.js", "d2c1c97e5910bf0f"],
-  ["js/lang/en.ui.js", "d5e1c70a4bfd4de5"],
-  ["js/lang/fr.codex.js", "34a0df14f0b91183"],
+  ["js/lang/en.msg.js", "b2f3bd7db43de22e"],
+  ["js/lang/en.ui.js", "5483113c6f865305"],
+  ["js/lang/fr.codex.js", "6612e07120366296"],
   ["js/lang/fr.data.js", "b0c38e5ecc1cfcfd"],
-  ["js/lang/fr.msg.js", "e9d9feefebb1bd48"],
-  ["js/lang/fr.ui.js", "f0e5f7afd50fbf49"],
+  ["js/lang/fr.msg.js", "799aa10760ada125"],
+  ["js/lang/fr.ui.js", "0006b1584db71a33"],
   ["js/lang/manifest.js", "1ec540c716c06416"],
-  ["js/lang/zh.ui.js", "caf0c696612892b8"],
+  ["js/lang/zh.ui.js", "be2166f2b4f4c183"],
   ["js/net.js", "c4e2514e2efd4641"],
   ["js/p2p.js", "02d68dc21a9f3974"],
   ["js/peerjs.min.js", "7604d8c31bec4f13"],
-  ["js/ui.js", "d5946f2513b0959e"],
+  ["js/ui.js", "27b8cc2805d3c498"],
   ["manifest.webmanifest", "f2ef1085ddb2bb3a"]
 ];
 const WARM = ["https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@900&display=swap&text=%E7%95%B0%E9%99%A3%E5%B0%8D%E6%B1%BA%E7%AC%AC%E5%9B%9E%E5%90%88%E9%A0%90%E5%88%A4%E9%98%B2%E7%A6%A6%E9%80%9F%E5%BA%A6%E5%88%A4%E5%AE%9A%E5%87%BA%E6%8B%9B%E6%9C%AB%E7%B5%90%E7%AE%97%E5%8B%9D%E5%88%A9%E5%B9%B3%E6%89%8B%E4%BD%A0%E8%B4%8F%E4%BA%86%E8%BC%B8%E7%A6%81%E7%94%A8%E9%9A%8E%E6%AE%B5%E8%BC%AA%E6%8A%BD%E9%81%B8%E8%A7%92%E7%9B%B2%E5%8D%80%E4%BD%88%E9%99%A3%E6%9A%97%E4%BB%98%E5%B0%8D%E6%88%B0%E7%B5%90%E6%9D%9F%E5%90%8C%E6%99%82%E6%8F%AD%E6%9B%89%E9%96%8B%E5%A7%8B%E8%AB%8B%E6%8A%8A%E8%A3%9D%E7%BD%AE%E4%BA%A4%E7%B5%A6%E4%B8%8B%E4%B8%80%E4%BA%8C%E4%B8%89%E5%9B%9B%E4%BA%94%E5%85%AD%E4%B8%83%E5%85%AB%E4%B9%9D%E5%8D%81%E3%80%81%EF%BC%81"];
@@ -81,7 +81,11 @@ const ART_URLS = [
   "art/heroes/icequeen.webp?v=851009688",
   "art/heroes/saint.webp?v=596866244",
   "art/heroes/swordsman.webp?v=1337515242",
-  "art/heroes/pirate.webp?v=2262174089"
+  "art/heroes/pirate.webp?v=2262174089",
+  "art/heroes/m_cult.webp?v=1272996593",
+  "art/heroes/m_gun.webp?v=3131119612",
+  "art/heroes/m_shield.webp?v=335581835",
+  "art/heroes/m_star.webp?v=3088622265"
 ];
 
 const SCOPE = self.registration.scope;     // 例如 https://user.github.io/repo/
