@@ -77,7 +77,7 @@ GAME.I18N.add('zh', {
     mode_ai_b: '一台裝置・對戰電腦',
     mode_ai_s: '一個人也能練習',
     mode_online_b: '兩台裝置・連線',
-    mode_online_s: '同一個 Wi-Fi 下的手機／平板／電腦',
+    mode_online_s: '各自用手機／平板／電腦，透過網路對戰',
 
     // ---------- 規則說明 ----------
     rules_title: '規則說明',
@@ -126,7 +126,7 @@ GAME.I18N.add('zh', {
 
     // ---------- 連線大廳 ----------
     lobby_title: '兩台裝置・連線對戰',
-    lobby_checking: '正在尋找連線伺服器…',
+    lobby_checking: '正在檢查連線方式…',
     lobby_noserver_title: '需要先啟動連線伺服器',
     // {mode} = 首頁「兩台裝置・連線」按鈕的文字
     lobby_noserver_steps: `<li>在電腦上打開遊戲資料夾，雙擊 <b>start-server.bat</b>（需要安裝 Python）。</li>
@@ -136,8 +136,6 @@ GAME.I18N.add('zh', {
     lobby_firewall: '如果 Windows 跳出防火牆提示，請按「允許存取」。',
     lobby_public_warn: '這台電腦的 Wi-Fi 是「公用網路」，Windows 防火牆會擋住其他裝置。請到 <b>設定 → 網路和網際網路 → Wi-Fi → 這個網路</b>，把網路設定檔類型改成「私人」；或在 <b>Windows 安全性 → 防火牆與網路保護 → 允許應用程式通過防火牆</b> 勾選 python.exe 的「私人」。',
     lobby_retry: '重新偵測',
-    // 網路版（https 網站）沒有連線伺服器時多一行說明
-    lobby_hosted_note: '網路版沒有連線伺服器。兩台裝置連線時，請在連同一個 Wi-Fi 的電腦上執行遊戲資料夾裡的 <b>start-server.bat</b>，兩台裝置都打開它顯示的網址（不是這個網站）。一台裝置的模式不受影響，沒有網路也能玩。',
     lobby_your_name: '你的名字',
     lobby_create: '建立房間',
     lobby_create_sub: '取得房間代碼，給另一台裝置輸入',
@@ -157,6 +155,27 @@ GAME.I18N.add('zh', {
     toast_create_fail: '建立房間失敗：{err}',
     toast_code4: '請輸入 4 碼房間代碼',
     toast_spectator: '觀戰中無法開新局',
+
+    // ---------- 網路對戰（js/p2p.js：透過 PeerJS 直接連線，不需要連線伺服器） ----------
+    net_pick_p2p: '🌐 網路',
+    net_pick_lan: '📶 同一個 Wi-Fi',
+    net_pick_p2p_d: '各自在任何地方連上網路就能玩',
+    net_pick_lan_d: '透過這台電腦的連線伺服器，不需要網際網路',
+    lobby_create_sub_p2p: '取得房間代碼，傳給對手輸入',
+    // {mode} = 首頁「兩台裝置・連線」按鈕、{join} = 「加入房間」按鈕
+    lobby_host_hint_p2p: '請對手用自己的裝置打開下面的網址，選「{mode}」→「{join}」，輸入這個代碼',
+    lobby_p2p_note: '網路對戰透過免費的 PeerJS 服務（0.peerjs.com）讓兩台裝置找到彼此，之後出招直接在兩台裝置之間傳送（無法直連時經由 PeerJS 的轉送伺服器）。PeerJS 會看到兩台裝置的 IP 位址。少數公司、學校或電信業者的網路會擋住這種連線。',
+    lobby_lan_title: '沒有網路？用同一個 Wi-Fi 的電腦當連線伺服器',
+    p2p_connected: '已連上房主，準備開始…',
+    // 連線狀態與斷線原因（js/p2p.js 回報的代碼）
+    p2p_err_connecting: '連線中…',
+    p2p_err_load: '無法載入連線元件，請確認網路後再試一次。',
+    p2p_err_unsupported: '這個瀏覽器不能網路對戰（不支援 WebRTC），請改用最新版的 Chrome、Edge、Safari 或 Firefox。',
+    p2p_err_signal: '連不上配對服務（0.peerjs.com）。請確認這台裝置有連上網路；也可能是服務暫時故障，會自動重試。',
+    p2p_err_host_away: '房主的裝置目前不在線上（螢幕鎖定、切到別的 App 或重新整理中）。房主回來後會自動接上。',
+    p2p_err_p2p: '兩台裝置無法直接連線，可能是公司、學校或電信業者的網路擋住了。試試兩台都改連 Wi-Fi（或其中一台改用行動網路）、關掉 VPN。會自動重試。',
+    p2p_err_id_taken: '這個房間還開在另一個分頁或裝置上，請先關掉那邊；會自動重試。',
+    toast_no_room_p2p: '找不到房間：請確認代碼，並請房主停在房間畫面',
 
     // ---------- 遊戲上方標題列 ----------
     tb_round: ' · 第 {n}/{max} 回合', // 接在階段名稱後面

@@ -77,7 +77,7 @@ GAME.I18N.add('en', {
     mode_ai_b: "One device · Vs Computer",
     mode_ai_s: "Practice on your own",
     mode_online_b: "Two devices · Online",
-    mode_online_s: "Phones / tablets / computers on the same Wi-Fi",
+    mode_online_s: "Each on your own phone, tablet or computer, over the internet",
 
     // ---------- Rules ----------
     rules_title: "Rules",
@@ -126,7 +126,7 @@ GAME.I18N.add('en', {
 
     // ---------- Online lobby ----------
     lobby_title: "Two devices · Online battle",
-    lobby_checking: "Looking for the game server…",
+    lobby_checking: "Checking how to connect…",
     lobby_noserver_title: "Start the game server first",
     // {mode} = text of the home screen "Two devices · Online" button
     lobby_noserver_steps: `<li>On the computer, open the game folder and double-click <b>start-server.bat</b> (Python is required).</li>
@@ -136,8 +136,6 @@ GAME.I18N.add('en', {
     lobby_firewall: 'If Windows shows a firewall prompt, click "Allow access".',
     lobby_public_warn: "This computer's Wi-Fi is set to <b>Public</b>, so Windows Firewall blocks other devices. Go to <b>Settings → Network &amp; internet → Wi-Fi → this network</b> and set the network profile to <b>Private</b>, or in <b>Windows Security → Firewall &amp; network protection → Allow an app through firewall</b>, tick <b>Private</b> for python.exe.",
     lobby_retry: "Check again",
-    // Extra line on the hosted (https) web version, which has no game server
-    lobby_hosted_note: "This web version has no game server. To play on two devices, run <b>start-server.bat</b> from the game folder on a computer on the same Wi-Fi, then open the address it shows on both devices (not this website). One-device modes are not affected and work even offline.",
     lobby_your_name: "Your name",
     lobby_create: "Create room",
     lobby_create_sub: "Get a room code to enter on the other device",
@@ -157,6 +155,27 @@ GAME.I18N.add('en', {
     toast_create_fail: "Couldn't create room: {err}",
     toast_code4: "Please enter the 4-character room code",
     toast_spectator: "Spectators can't start a new game",
+
+    // ---------- Online play (js/p2p.js: direct connection via PeerJS, no game server needed) ----------
+    net_pick_p2p: "🌐 Internet",
+    net_pick_lan: "📶 Same Wi-Fi",
+    net_pick_p2p_d: "Play from anywhere with an internet connection",
+    net_pick_lan_d: "Through this computer's game server; no internet needed",
+    lobby_create_sub_p2p: "Get a room code to send to the other player",
+    // {mode} = the "Two devices" button on the home screen, {join} = the "Join room" button
+    lobby_host_hint_p2p: 'Ask the other player to open the address below on their own device, choose "{mode}" → "{join}" and enter this code',
+    lobby_p2p_note: "Online play uses the free PeerJS service (0.peerjs.com) so the two devices can find each other; moves then go directly between them (or through PeerJS's relay server when a direct connection isn't possible). PeerJS can see both devices' IP addresses. A few company, school or mobile networks block this kind of connection.",
+    lobby_lan_title: "No internet? Use a computer on the same Wi-Fi as the game server",
+    p2p_connected: "Connected to the host, starting…",
+    // Connection status and reasons for a lost connection (codes reported by js/p2p.js)
+    p2p_err_connecting: "Connecting…",
+    p2p_err_load: "Couldn't load the online module. Check the internet connection and try again.",
+    p2p_err_unsupported: "This browser can't play online (no WebRTC support). Please use an up-to-date Chrome, Edge, Safari or Firefox.",
+    p2p_err_signal: "Can't reach the matchmaking service (0.peerjs.com). Check that this device is online; the service may also be down for a moment. Retrying automatically.",
+    p2p_err_host_away: "The host's device is offline right now (screen locked, another app open, or reloading). It reconnects automatically when the host is back.",
+    p2p_err_p2p: "The two devices can't connect directly; a company, school or mobile network may be blocking it. Try putting both on Wi-Fi (or switching one to mobile data) and turning off any VPN. Retrying automatically.",
+    p2p_err_id_taken: "This room is still open in another tab or on another device. Close it there first; retrying automatically.",
+    toast_no_room_p2p: "Room not found: check the code, and ask the host to stay on the room screen",
 
     // ---------- Game title bar ----------
     tb_round: " · Round {n}/{max}", // appended after the phase name

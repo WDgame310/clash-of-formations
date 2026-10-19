@@ -14,6 +14,18 @@
   const K_LOCAL = 'yzdj_local_v1', K_ONLINE = 'yzdj_online_v1', K_NAMES = 'yzdj_names_v1', K_CID = 'yzdj_cid_v1', K_SOUND = 'yzdj_sound_v1', K_SPEED = 'yzdj_speed_v1';
   // 提示模式（guided 攻略：顯示克制與連攜／challenge 挑戰：隱藏）與「我的發現」筆記，都只存在這台裝置
   const K_HINTS = 'yzdj_hints_v1', K_NOTES = 'yzdj_notes_v1';
+  // 大廳上次選的連線方式（'p2p' 網路／'lan' 同一個 Wi-Fi 的 server.py）
+  const K_NET = 'yzdj_net_v1';
+  // 只屬於這個分頁的資料（sessionStorage）：連線中的房間每個分頁各記一份，同一台電腦開兩個分頁測試、重新整理時不會互相蓋掉
+  const SS = {
+    get(k) { try { return JSON.parse(sessionStorage.getItem(k)); } catch (e) { return null; } },
+    set(k, v) { try { sessionStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* ignore */ } },
+    del(k) { try { sessionStorage.removeItem(k); } catch (e) { /* ignore */ } },
+  };
+  // 連線中的房間：這個分頁的（重新整理後）優先，其次是這台裝置最後一次的（App 關掉再開）
+  const savedOnline = () => SS.get(K_ONLINE) || LS.get(K_ONLINE);
+  function saveOnline(on) { LS.set(K_ONLINE, on); SS.set(K_ONLINE, on); }
+  function clearOnline() { LS.del(K_ONLINE); SS.del(K_ONLINE); }
   const rand32 = () => {
     if (window.crypto && crypto.getRandomValues) return crypto.getRandomValues(new Uint32Array(1))[0] | 0;
     return (Math.random() * 4294967296) | 0;
@@ -85,7 +97,7 @@
     // App 內建的瀏覽器（LINE、Facebook、Instagram、微信、Android 的 WebView）：沒有「加入主畫面」也不能安裝，
     // 要先改用 Safari／Chrome 開啟同一個網址
     inapp: /\bLine\/|FBAN|FBAV|FB_IAB|Instagram|MicroMessenger|KAKAOTALK|; wv\)/i.test(navigator.userAgent),
-    // 放在 https 網站上（不是本機、也不是區網的 server.py）：大廳要說明兩台裝置連線怎麼玩
+    // 放在 https 網站上（不是本機、也不是區網的 server.py）：iPhone、App 內建瀏覽器的安裝提示只在網站版顯示
     hosted: location.protocol === 'https:' && !LOCAL_HOSTS.includes(location.hostname),
   };
   function registerSW() {
@@ -321,26 +333,30 @@
     if (ui.room) ui.room.stop();
     ui.room = null;
   }
-  function joinRoom(code, role, myName, isNew, cid) {
+  // net：'lan'（server.py，同一個 Wi-Fi）或 'p2p'（網路對戰，js/p2p.js）；peer：網路對戰建立房間時已經登記好的房主 peer
+  function joinRoom(code, role, myName, isNew, cid, net, peer) {
     leaveRoom();
     resetTransient();
     if (cid) ui.cid = cid;
+    net = net === 'p2p' ? 'p2p' : 'lan';
     ui.mode = 'online';
     ui.role = role;
-    ui.on = { code, hello: null, guest: null, catchingUp: true };
+    ui.on = { code, net, hello: null, guest: null, catchingUp: true };
     ui.S = null;
     ui.sides = [];
     ui.screen = 'lobby';
     ui.lobby.step = 'room';
-    LS.set(K_ONLINE, { code, role, name: myName, cid: ui.cid });
-    ui.room = new Net.Room(code, onMsgs, (ok, err) => {
-      const changed = ok !== ui.netOk;
+    saveOnline({ code, role, name: myName, cid: ui.cid, net });
+    if (net === 'p2p') { ui.netOk = false; ui.netErr = 'connecting'; }
+    const onStatus = (ok, err) => {
+      const changed = ok !== ui.netOk || (err || '') !== ui.netErr;
       ui.netOk = ok; ui.netErr = err || '';
-      if (!ok && /房間不存在|404/.test(ui.netErr)) {
-        leaveRoom(); LS.del(K_ONLINE); ui.screen = 'lobby'; ui.lobby.step = 'menu'; toast(t('toast_no_room')); render(); return;
+      if (!ok && (/房間不存在|404/.test(ui.netErr) || ui.netErr === 'no_room')) {
+        leaveRoom(); clearOnline(); toast(t(net === 'p2p' ? 'toast_no_room_p2p' : 'toast_no_room')); backToMenu(); return;
       }
       if (changed) render();
-    });
+    };
+    ui.room = net === 'p2p' ? new Net.P2PRoom(code, role, onMsgs, onStatus, { isNew, peer }) : new Net.Room(code, onMsgs, onStatus);
     if (isNew && role === 'host') ui.room.send({ t: 'hello', name: myName, seed: rand32(), cid: ui.cid });
     if (isNew && role === 'guest') ui.room.send({ t: 'join', name: myName, cid: ui.cid });
     render();
@@ -562,7 +578,7 @@
     return `<div class="hint-pick"><div class="hint-h">${t('hints_label')}</div><div class="cx-filters"><div>${b('guided')}${b('challenge')}</div></div><small>${t('hints_' + ui.hints + '_d')}</small></div>`;
   }
   function renderHome() {
-    const sv = LS.get(K_LOCAL), on = LS.get(K_ONLINE);
+    const sv = LS.get(K_LOCAL), on = savedOnline();
     const modeName = { hotseat: t('mode_hotseat'), ai: t('mode_ai') };
     const canResume = sv && sv.meta && sv.meta.phase !== 'over';
     const parade = D.heroes.concat(D.heroes).map(h => face(h.id, h.icon, '', `--fc:${D.FACTIONS[h.f].color}`)).join('');
@@ -616,10 +632,10 @@
     let body = '';
     if (L.step === 'checking') body = `<div class="spinner"></div><p class="center muted">${t('lobby_checking')}</p>`;
     else if (L.step === 'noserver') {
-      // 網路版（https 網站）沒有連線伺服器：說明兩台裝置要用同一個 Wi-Fi 的電腦開 start-server.bat，單機模式照常離線可玩
+      // 瀏覽器不能網路對戰（沒有 WebRTC）、也找不到連線伺服器：說明怎麼用同一個 Wi-Fi 的電腦開 start-server.bat
       body = `<div class="card-box">
         <h3>${t('lobby_noserver_title')}</h3>
-        ${pwa.hosted ? `<p class="hosted-note">${t('lobby_hosted_note')}</p>` : ''}
+        <p class="hosted-note">${t('p2p_err_unsupported')}</p>
         <ol>
           ${t('lobby_noserver_steps', { mode: t('mode_online_b') })}
         </ol>
@@ -627,22 +643,35 @@
       </div>
       <button class="btn" data-act="lobby">${t('lobby_retry')}</button>`;
     } else if (L.step === 'menu') {
-      body = `<label class="field">${t('lobby_your_name')}<input id="myname" maxlength="10" value="${esc(ui.names[0])}"></label>
-        <button class="mode-btn wide" data-act="createRoom"><span class="mode-ic">🏠</span><b>${t('lobby_create')}</b><small>${t('lobby_create_sub')}</small></button>
+      // 網路（p2p）與同一個 Wi-Fi（server.py）都可以用時，上方可以切換；網站版只有網路對戰，Wi-Fi 的玩法收在下方說明裡
+      const p2p = L.net === 'p2p';
+      const pick = v => `<button class="cx-filter ${L.net === v ? 'on' : ''}" data-act="netPick" data-v="${v}">${t('net_pick_' + v)}</button>`;
+      body = `${L.server && L.p2p ? `<div class="cx-filters net-pick"><div>${pick('p2p')}${pick('lan')}</div><small>${t('net_pick_' + L.net + '_d')}</small></div>` : ''}
+        <label class="field">${t('lobby_your_name')}<input id="myname" maxlength="10" value="${esc(ui.names[0])}"></label>
+        <button class="mode-btn wide" data-act="createRoom"${L.busy ? ' disabled' : ''}><span class="mode-ic">🏠</span><b>${t('lobby_create')}</b><small>${t(p2p ? 'lobby_create_sub_p2p' : 'lobby_create_sub')}</small></button>
         <div class="or">${t('lobby_or')}</div>
-        <div class="join-row"><input id="roomcode" maxlength="4" placeholder="${esc(t('lobby_code_ph'))}" autocapitalize="characters" autocomplete="off"><button class="btn primary" data-act="joinRoom">${t('lobby_join')}</button></div>
-        ${L.urls && L.urls.length ? `<p class="muted center">${t('lobby_open_url')}<br>${L.urls.map(u => `<code>${esc(u)}</code>`).join('<br>')}</p>` : ''}
-        ${netWarn(L)}`;
+        <div class="join-row"><input id="roomcode" maxlength="4" placeholder="${esc(t('lobby_code_ph'))}" autocapitalize="characters" autocomplete="off"><button class="btn primary" data-act="joinRoom"${L.busy ? ' disabled' : ''}>${t('lobby_join')}</button></div>
+        ${L.busy ? `<div class="spinner"></div><p class="center muted">${t('p2p_err_connecting')}</p>` : ''}
+        ${L.err ? `<div class="dwarn"><div>⚠ ${t('p2p_err_' + L.err)}</div></div>` : ''}
+        ${p2p ? `<p class="net-note">${t('lobby_p2p_note')}</p>` : `${L.urls && L.urls.length ? `<p class="muted center">${t('lobby_open_url')}<br>${L.urls.map(u => `<code>${esc(u)}</code>`).join('<br>')}</p>` : ''}
+        ${netWarn(L)}`}
+        ${L.server ? '' : lanHelp()}`;
     } else if (L.step === 'room') {
       const on = ui.on || {};
+      const p2p = on.net === 'p2p', host = ui.role === 'host';
+      // 網路對戰：房主畫面顯示這個網站的網址，對手用自己的裝置打開、輸入代碼
+      const site = location.href.split(/[?#]/)[0];
+      const status = !p2p ? (ui.netOk ? t('lobby_waiting') : t('lobby_retrying'))
+        : ui.netOk ? (host ? t('lobby_waiting') : t('p2p_connected')) : p2pWhy() ? t('lobby_retrying') : t('p2p_err_connecting');
       body = `<div class="card-box center">
         <div class="muted">${t('lobby_room_code')}</div>
         <div class="room-code">${esc(on.code).split('').map(ch => `<span>${ch}</span>`).join('')}</div>
-        <p>${ui.role === 'host' ? t('lobby_host_hint', { join: t('lobby_join') }) : t('lobby_joining')}</p>
-        ${L.urls && L.urls.length ? `<p class="muted">${t('lobby_other_url')}<br>${L.urls.map(u => `<code>${esc(u)}</code>`).join('<br>')}</p>` : ''}
-        ${netWarn(L)}
+        <p>${!host ? t('lobby_joining') : p2p ? t('lobby_host_hint_p2p', { mode: t('mode_online_b'), join: t('lobby_join') }) : t('lobby_host_hint', { join: t('lobby_join') })}</p>
+        ${p2p && host ? `<p><code class="site-url">${esc(site)}</code></p>` : ''}
+        ${!p2p && L.urls && L.urls.length ? `<p class="muted">${t('lobby_other_url')}<br>${L.urls.map(u => `<code>${esc(u)}</code>`).join('<br>')}</p>` : ''}
+        ${p2p ? p2pWarn() : netWarn(L)}
         <div class="spinner"></div>
-        <p class="muted">${ui.netOk ? t('lobby_waiting') : t('lobby_retrying')}</p>
+        <p class="muted">${status}</p>
       </div>
       <button class="btn" data-act="leaveRoom">${t('lobby_leave')}</button>`;
     }
@@ -651,16 +680,35 @@
       ${body}
     </div>`;
   }
+  // 大廳：檢查有沒有同一個 Wi-Fi 的連線伺服器（server.py）、瀏覽器能不能網路對戰（WebRTC）
   async function openLobby() {
     readNames();
     ui.screen = 'lobby';
-    ui.lobby = { step: 'checking' };
+    const L = ui.lobby = { step: 'checking' };
     render();
-    const ok = await Net.available();
-    ui.lobby.step = ok ? 'menu' : 'noserver';
-    if (ok) { try { const info = await Net.info(); ui.lobby.urls = info.urls; ui.lobby.publicNet = !!info.publicNet; } catch (e) { /* ignore */ } }
+    const server = await Net.available();
+    if (ui.lobby !== L) return;
+    L.server = server;
+    L.p2p = !!(Net.P2P && Net.P2P.supported());
+    if (server) { try { const info = await Net.info(); L.urls = info.urls; L.publicNet = !!info.publicNet; } catch (e) { /* ignore */ } }
+    if (ui.lobby !== L) return;
+    // 兩種都可以：用上次選的（第一次用 Wi-Fi 伺服器，跟以前一樣）
+    L.net = !L.p2p ? 'lan' : !server ? 'p2p' : LS.get(K_NET) === 'p2p' ? 'p2p' : 'lan';
+    L.checked = true;
+    L.step = server || L.p2p ? 'menu' : 'noserver';
     render();
   }
+  // 回到大廳選單（離開房間、找不到房間）；從首頁直接回到房間時還沒檢查過連線方式，就重新檢查
+  function backToMenu() {
+    ui.screen = 'lobby';
+    if (ui.lobby.checked) { ui.lobby.step = 'menu'; ui.lobby.busy = false; render(); } else openLobby();
+  }
+  // 網路對戰沒有連線伺服器：「同一個 Wi-Fi、不需要網際網路」的玩法收在可以展開的說明裡
+  const lanHelp = () => `<details class="lan-help"><summary>${t('lobby_lan_title')}</summary><ol>${t('lobby_noserver_steps', { mode: t('mode_online_b') })}</ol><p class="muted">${t('lobby_firewall')}</p></details>`;
+  // 網路對戰的連線狀態：js/p2p.js 回報的代碼 → p2p_err_<代碼> 的說明（connecting 只是連線中，不顯示說明框）
+  const P2P_WHY = ['load', 'unsupported', 'signal', 'host_away', 'p2p', 'id_taken'];
+  const p2pWhy = () => (ui.mode === 'online' && ui.on && ui.on.net === 'p2p' && !ui.netOk && P2P_WHY.includes(ui.netErr) ? ui.netErr : '');
+  const p2pWarn = () => { const w = p2pWhy(); return w ? `<div class="dwarn"><div>⚠ ${t('p2p_err_' + w)}</div></div>` : ''; };
 
   // ---------- 遊戲 ----------
   function topbar() {
@@ -668,7 +716,10 @@
     const r = S.round ? t('tb_round', { n: S.round, max: E.MAX_ROUND }) + (S.round >= E.FATIGUE_FROM ? ' ☠️' : '') : '';
     const title = ui.pb ? t('tb_resolve', { n: S.resolved }) : phaseName(S.phase) + r;
     const net = ui.mode === 'online' ? `<span class="net-dot ${ui.netOk ? 'ok' : 'bad'}" title="${esc(ui.netOk ? t('net_ok') : t('net_bad'))}"></span>` : '';
-    return `<div class="topbar"><button class="icon-btn" data-act="menu">☰</button><div class="title">${title}</div><span class="tb-right">${net}<button class="icon-btn" data-act="sound">${SFX.on ? '🔊' : '🔇'}</button></span></div>`;
+    // 網路對戰斷線時，標題列下方說明原因（房主離線、網路擋住直接連線…）
+    const why = p2pWhy();
+    return `<div class="topbar"><button class="icon-btn" data-act="menu">☰</button><div class="title">${title}</div><span class="tb-right">${net}<button class="icon-btn" data-act="sound">${SFX.on ? '🔊' : '🔇'}</button></span></div>`
+      + (why ? `<div class="dwarn net-banner"><div>⚠ ${t('p2p_err_' + why)}</div></div>` : '');
   }
   function renderGame() {
     const S = ui.S;
@@ -1501,8 +1552,8 @@
     start: el => startLocal(el.dataset.mode),
     resume: resumeLocal,
     resumeOnline() {
-      const on = LS.get(K_ONLINE);
-      if (on) joinRoom(on.code, on.role, on.name, false, on.cid);
+      const on = savedOnline();
+      if (on) joinRoom(on.code, on.role, on.name, false, on.cid, on.net);
     },
     rules() { ui.screen = 'rules'; ui.rulesBack = 'home'; render(); },
     rulesFromGame() { ui.modal = null; ui.screen = 'rules'; ui.rulesBack = 'game'; render(); },
@@ -1577,18 +1628,49 @@
     lobby: openLobby,
     install: installApp,
     async createRoom() {
+      const L = ui.lobby;
+      if (L.busy) return;
       const n = (document.getElementById('myname').value || '').trim().slice(0, 10) || t('host_name');
       ui.names[0] = n; LS.set(K_NAMES, ui.names);
+      if (L.net === 'p2p') {
+        // 網路對戰：先向 PeerJS 伺服器登記房間（1～3 秒），成功才顯示代碼
+        L.busy = true; L.err = '';
+        render();
+        try {
+          const r = await Net.P2P.create();
+          L.busy = false;
+          if (ui.lobby !== L || ui.screen !== 'lobby' || L.step !== 'menu') { r.peer.destroy(); return; }   // 等待時已經離開大廳
+          joinRoom(r.code, 'host', n, true, null, 'p2p', r.peer);
+        } catch (e) {
+          L.busy = false; L.err = e.code || 'signal';
+          if (ui.lobby === L && ui.screen === 'lobby') render();
+        }
+        return;
+      }
       try { const r = await Net.create(); joinRoom(r.code, 'host', n, true); }
       catch (e) { toast(t('toast_create_fail', { err: e.message })); }
     },
     joinRoom() {
+      if (ui.lobby.busy) return;
       const code = (document.getElementById('roomcode').value || '').trim().toUpperCase();
       const n = (document.getElementById('myname').value || '').trim().slice(0, 10) || t('guest_name');
       if (code.length !== 4) return toast(t('toast_code4'));
-      joinRoom(code, 'guest', n, true);
+      joinRoom(code, 'guest', n, true, null, ui.lobby.net);
     },
-    leaveRoom() { leaveRoom(); LS.del(K_ONLINE); ui.lobby.step = 'menu'; render(); },
+    leaveRoom() {
+      // 網路對戰的房主離開房間：房間就關了，刪掉這台裝置保存的訊息紀錄
+      if (ui.on && ui.on.net === 'p2p' && ui.role === 'host' && Net.P2P) Net.P2P.forget(ui.on.code);
+      leaveRoom(); clearOnline(); backToMenu();
+    },
+    netPick(el) {
+      const L = ui.lobby, name = document.getElementById('myname');
+      if (name) ui.names[0] = name.value.trim().slice(0, 10) || ui.names[0];
+      L.net = el.dataset.v === 'p2p' ? 'p2p' : 'lan';
+      L.err = '';
+      LS.set(K_NET, L.net);
+      SFX.play('click');
+      render();
+    },
     menu() { ui.modal = { type: 'menu' }; render(); },
     closeModal(el, ev) {
       if (ev.target !== el || (ui.modal && ui.modal.type === 'note')) return;

@@ -76,7 +76,7 @@ GAME.I18N.add('fr', {
     mode_ai_b: "1 appareil · contre l'ordinateur",
     mode_ai_s: "Pour s'entraîner en solo",
     mode_online_b: "2 appareils · en réseau",
-    mode_online_s: "Téléphones, tablettes ou ordinateurs sur le même Wi-Fi",
+    mode_online_s: "Chacun sur son téléphone, sa tablette ou son ordinateur, par Internet",
 
     // ---------- Règles ----------
     rules_title: "Règles",
@@ -125,7 +125,7 @@ GAME.I18N.add('fr', {
 
     // ---------- Salon en réseau ----------
     lobby_title: "2 appareils · partie en réseau",
-    lobby_checking: "Recherche du serveur de connexion…",
+    lobby_checking: "Vérification des modes de connexion…",
     lobby_noserver_title: "Lancez d'abord le serveur de connexion",
     // {mode} = texte du bouton « 2 appareils · en réseau » de l'accueil
     lobby_noserver_steps: `<li>Sur l'ordinateur, ouvrez le dossier du jeu et double-cliquez sur <b>start-server.bat</b> (Python doit être installé).</li>
@@ -135,8 +135,6 @@ GAME.I18N.add('fr', {
     lobby_firewall: "Si Windows affiche une alerte du pare-feu, cliquez sur « Autoriser l'accès ».",
     lobby_public_warn: "Le Wi-Fi de cet ordinateur est en réseau <b>public</b> : le pare-feu Windows bloque les autres appareils. Allez dans <b>Paramètres → Réseau et Internet → Wi-Fi → ce réseau</b> et choisissez le profil <b>Privé</b>, ou dans <b>Sécurité Windows → Pare-feu et protection du réseau → Autoriser une application via le pare-feu</b>, cochez <b>Privé</b> pour python.exe.",
     lobby_retry: "Réessayer",
-    // Ligne en plus sur la version en ligne (https), qui n'a pas de serveur de jeu
-    lobby_hosted_note: "Cette version en ligne n'a pas de serveur de jeu. Pour jouer sur deux appareils, lancez <b>start-server.bat</b> (dans le dossier du jeu) sur un ordinateur connecté au même Wi-Fi, puis ouvrez l'adresse qu'il affiche sur les deux appareils (pas ce site). Les modes sur un seul appareil ne sont pas concernés et marchent même hors ligne.",
     lobby_your_name: "Votre nom",
     lobby_create: "Créer un salon",
     lobby_create_sub: "Obtenez un code à saisir sur l'autre appareil",
@@ -156,6 +154,27 @@ GAME.I18N.add('fr', {
     toast_create_fail: "Impossible de créer le salon : {err}",
     toast_code4: "Saisissez un code de salon à 4 caractères",
     toast_spectator: "Impossible de lancer une partie en tant que spectateur",
+
+    // ---------- Jeu en ligne (js/p2p.js : connexion directe via PeerJS, sans serveur de jeu) ----------
+    net_pick_p2p: "🌐 Internet",
+    net_pick_lan: "📶 Même Wi-Fi",
+    net_pick_p2p_d: "Jouez de n'importe où avec une connexion Internet",
+    net_pick_lan_d: "Via le serveur de jeu de cet ordinateur ; pas besoin d'Internet",
+    lobby_create_sub_p2p: "Obtenez un code de salon à envoyer à l'autre joueur",
+    // {mode} = le bouton « 2 appareils » de l'accueil, {join} = le bouton « Rejoindre »
+    lobby_host_hint_p2p: "Demandez à l'autre joueur d'ouvrir l'adresse ci-dessous sur son appareil, de choisir « {mode} » → « {join} » et de saisir ce code",
+    lobby_p2p_note: "Le jeu en ligne utilise le service gratuit PeerJS (0.peerjs.com) pour que les deux appareils se trouvent ; les coups passent ensuite directement de l'un à l'autre (ou par le serveur relais de PeerJS si la connexion directe est impossible). PeerJS voit les adresses IP des deux appareils. Certains réseaux d'entreprise, d'école ou d'opérateur mobile bloquent ce type de connexion.",
+    lobby_lan_title: "Pas d'Internet ? Utilisez un ordinateur du même Wi-Fi comme serveur de jeu",
+    p2p_connected: "Connecté à l'hôte, démarrage…",
+    // État de la connexion et raisons d'une déconnexion (codes renvoyés par js/p2p.js)
+    p2p_err_connecting: "Connexion…",
+    p2p_err_load: "Impossible de charger le module en ligne. Vérifiez la connexion Internet et réessayez.",
+    p2p_err_unsupported: "Ce navigateur ne permet pas le jeu en ligne (WebRTC non pris en charge). Utilisez une version récente de Chrome, Edge, Safari ou Firefox.",
+    p2p_err_signal: "Impossible de joindre le service de mise en relation (0.peerjs.com). Vérifiez que l'appareil est connecté à Internet ; le service peut aussi être momentanément indisponible. Nouvel essai automatique.",
+    p2p_err_host_away: "L'appareil de l'hôte est hors ligne pour l'instant (écran verrouillé, autre appli ouverte ou rechargement). La connexion reprendra automatiquement à son retour.",
+    p2p_err_p2p: "Les deux appareils n'arrivent pas à se connecter directement : un réseau d'entreprise, d'école ou d'opérateur mobile le bloque peut-être. Essayez de mettre les deux en Wi-Fi (ou l'un en données mobiles) et de désactiver tout VPN. Nouvel essai automatique.",
+    p2p_err_id_taken: "Ce salon est encore ouvert dans un autre onglet ou sur un autre appareil. Fermez-le d'abord ; nouvel essai automatique.",
+    toast_no_room_p2p: "Salon introuvable : vérifiez le code et demandez à l'hôte de rester sur l'écran du salon",
 
     // ---------- Barre de titre ----------
     tb_round: " · Manche {n}/{max}",

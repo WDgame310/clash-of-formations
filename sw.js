@@ -1,4 +1,4 @@
-// 發佈版：由 tools/build_pwa.py 從專案根目錄的 sw.js 產生（版本 80807fdfba53），請改範本後重新 build，不要直接改這個檔。
+// 發佈版：由 tools/build_pwa.py 從專案根目錄的 sw.js 產生（版本 5040e4fbbe66），請改範本後重新 build，不要直接改這個檔。
 // 異陣對決：Service Worker（安裝成 App 之後，同一台裝置的模式離線也能玩：輪流玩、對戰電腦、圖鑑、筆記）
 //
 // 兩種版本：
@@ -9,7 +9,7 @@
 //   就在背景下載整套新版、接手（ui.js 收到 controllerchange 會跳「已更新」通知），下次開啟時就是新版。
 //
 // 各種請求怎麼處理（發佈版）：
-// - /api/*（server.py 的兩台裝置連線）、非 GET、Range、範圍外的網址：完全不碰，直接走網路
+// - /api/*（server.py 的兩台裝置連線）、非 GET、Range、範圍外的網址（例如網路對戰的 0.peerjs.com）：完全不碰，直接走網路
 // - 開啟遊戲頁面（./ 或 ./index.html）：快取優先。頁面與 js/css 永遠來自「同一版」的快取，不會新舊混用；
 //   新版靠上面的 sw.js 更新流程整套換掉。這樣手機在訊號差的地方也能馬上開啟，不用等網路逾時。
 // - 外殼檔案（PRECACHE 清單：js、語言檔、css、圖示、manifest）：快取優先。同一個 VERSION 的內容不會變，
@@ -22,9 +22,9 @@
 // - 其他同網域的檔案（不在清單裡）：先給存下的、同時在背景更新；遊戲頁以外的其他頁面：先抓網路、斷線用存下的。
 'use strict';
 
-const VERSION = '80807fdfba53';   // 由 tools/build_pwa.py 產生
+const VERSION = '5040e4fbbe66';   // 由 tools/build_pwa.py 產生
 const PRECACHE = [
-  ["index.html", "75875320dfe636de"],
+  ["index.html", "b65764b6e2186240"],
   ["art/manifest.js", "6892d3ca5b7ab145"],
   ["art/prompts.js", "f90dc6e281b72347"],
   ["css/cards.css", "89442767484f9080"],
@@ -43,15 +43,17 @@ const PRECACHE = [
   ["js/lang/en.codex.js", "9e00d5c23a2c8235"],
   ["js/lang/en.data.js", "78a53804d89cdd0c"],
   ["js/lang/en.msg.js", "d2c1c97e5910bf0f"],
-  ["js/lang/en.ui.js", "f8d5bb5d0ff23730"],
+  ["js/lang/en.ui.js", "d5e1c70a4bfd4de5"],
   ["js/lang/fr.codex.js", "34a0df14f0b91183"],
   ["js/lang/fr.data.js", "b0c38e5ecc1cfcfd"],
   ["js/lang/fr.msg.js", "e9d9feefebb1bd48"],
-  ["js/lang/fr.ui.js", "9d03050ba17eec4b"],
+  ["js/lang/fr.ui.js", "f0e5f7afd50fbf49"],
   ["js/lang/manifest.js", "1ec540c716c06416"],
-  ["js/lang/zh.ui.js", "ea3c98ad03f89683"],
+  ["js/lang/zh.ui.js", "caf0c696612892b8"],
   ["js/net.js", "c4e2514e2efd4641"],
-  ["js/ui.js", "abc2550d29123f79"],
+  ["js/p2p.js", "02d68dc21a9f3974"],
+  ["js/peerjs.min.js", "7604d8c31bec4f13"],
+  ["js/ui.js", "d5946f2513b0959e"],
   ["manifest.webmanifest", "f2ef1085ddb2bb3a"]
 ];
 const WARM = ["https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@900&display=swap&text=%E7%95%B0%E9%99%A3%E5%B0%8D%E6%B1%BA%E7%AC%AC%E5%9B%9E%E5%90%88%E9%A0%90%E5%88%A4%E9%98%B2%E7%A6%A6%E9%80%9F%E5%BA%A6%E5%88%A4%E5%AE%9A%E5%87%BA%E6%8B%9B%E6%9C%AB%E7%B5%90%E7%AE%97%E5%8B%9D%E5%88%A9%E5%B9%B3%E6%89%8B%E4%BD%A0%E8%B4%8F%E4%BA%86%E8%BC%B8%E7%A6%81%E7%94%A8%E9%9A%8E%E6%AE%B5%E8%BC%AA%E6%8A%BD%E9%81%B8%E8%A7%92%E7%9B%B2%E5%8D%80%E4%BD%88%E9%99%A3%E6%9A%97%E4%BB%98%E5%B0%8D%E6%88%B0%E7%B5%90%E6%9D%9F%E5%90%8C%E6%99%82%E6%8F%AD%E6%9B%89%E9%96%8B%E5%A7%8B%E8%AB%8B%E6%8A%8A%E8%A3%9D%E7%BD%AE%E4%BA%A4%E7%B5%A6%E4%B8%8B%E4%B8%80%E4%BA%8C%E4%B8%89%E5%9B%9B%E4%BA%94%E5%85%AD%E4%B8%83%E5%85%AB%E4%B9%9D%E5%8D%81%E3%80%81%EF%BC%81"];
