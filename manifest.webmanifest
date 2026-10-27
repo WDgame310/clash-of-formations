@@ -1,0 +1,20 @@
+{
+  "name": "異陣對決 Clash of Formations",
+  "short_name": "異陣對決",
+  "description": "雙人策略卡牌對戰：24 名英雄、禁用輪抽、盲區佈陣、暗付出招、速度判定。同一台裝置輪流玩或對戰電腦，離線也能玩。",
+  "lang": "zh-Hant",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0b0e1c",
+  "theme_color": "#0b0e1c",
+  "categories": ["games"],
+  "prefer_related_applications": false,
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

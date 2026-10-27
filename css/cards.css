@@ -1,0 +1,87 @@
+/* 角色卡與頭像（遊戲與 art/import.html 共用） */
+/* ---------- 頭像徽章 ---------- */
+.medal {
+  --s: 42px; flex: none; width: var(--s); height: var(--s); border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center; font-size: calc(var(--s) * .56); line-height: 1;
+  background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--fc, #888) 55%, #fff 10%), color-mix(in srgb, var(--fc, #888) 30%, #0b0e1c) 70%);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--fc, #888) 80%, #000), 0 0 0 4px #0008, 0 4px 10px #0008, inset 0 -4px 8px #0006, inset 0 2px 4px #fff4;
+}
+.medal.sm { --s: 32px; }
+.medal.xs { --s: 30px; }
+.pslot .medal { --s: 100%; width: 100%; height: 100%; font-size: 17px; box-shadow: none; }
+.medal.lg { --s: 64px; }
+
+
+/* ---------- 角色卡（日系卡牌） ---------- */
+.hcard {
+  --w: 100%; position: relative; width: var(--w); aspect-ratio: 5 / 7; border-radius: 14px; padding: 4px; cursor: pointer; isolation: isolate;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--fc) 90%, #fff), color-mix(in srgb, var(--fc) 45%, #000) 45%, color-mix(in srgb, var(--fc) 85%, #fff) 70%, color-mix(in srgb, var(--fc) 40%, #000));
+  box-shadow: 0 8px 22px #0009, inset 0 0 0 1px #ffffff40;
+  transition: transform .25s var(--ease), box-shadow .25s, filter .3s, opacity .3s;
+  animation: tileIn .45s var(--ease) both; animation-delay: calc(var(--i, 0) * 25ms);
+}
+.hcard:hover { transform: translateY(-5px) rotate(-.6deg) scale(1.02); box-shadow: 0 16px 34px #000b, 0 0 26px color-mix(in srgb, var(--fc) 50%, transparent); }
+.hc-in { position: relative; width: 100%; height: 100%; border-radius: 10px; overflow: hidden; background: #0c1024; display: flex; flex-direction: column; }
+.hc-art { position: relative; flex: 1; overflow: hidden; container-type: size; }
+.hc-art::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, transparent 62%, #0c1024ee); }
+/* 立繪：高度填滿；比卡片寬的圖會左右移動，讓臉保持在畫面中 */
+/* --z：放大倍率（小卡放大到上半身，大卡看全身）；臉放在畫面上方約 26% 的位置 */
+.hc-img { position: absolute; width: auto; max-width: none; --ar: .6; --fx: .5; --fy: .25; --z: 1;
+  height: calc(104cqh * var(--z));
+  top: clamp(calc(100cqh - 104cqh * var(--z)), calc(26cqh - var(--fy) * 104cqh * var(--z)), 0px);
+  /* 比卡片寬：讓臉置中但不露出邊緣；比卡片窄（例如放大的卡片）：整張圖置中 */
+  --iw: calc(104cqh * var(--z) * var(--ar));
+  left: clamp(min(calc(100cqw - var(--iw)), calc((100cqw - var(--iw)) / 2)), calc(50cqw - var(--fx) * var(--iw)), max(0px, calc((100cqw - var(--iw)) / 2)));
+  transform-origin: 50% 30%; filter: drop-shadow(0 4px 8px #0008); transition: transform .4s var(--ease); }
+.hero-grid .hc-img { --z: 1.4; }
+/* 放大的卡片（點開角色）：整張立繪都看得到，左右置中 */
+.hcard.big .hc-img { --z: .96; }
+.hcard:hover .hc-img { transform: scale(1.04); }
+.hc-ph { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
+.hc-ph b { font-size: 56px; line-height: 1; filter: drop-shadow(0 6px 14px #000c) drop-shadow(0 0 22px color-mix(in srgb, var(--fc) 70%, transparent)); }
+.hc-ph small { font-size: 10px; color: #ffffffa0; letter-spacing: 1px; background: #0006; padding: 1px 8px; border-radius: 8px; }
+.hcard.big .hc-ph b { font-size: 110px; }
+/* 陣營背景 */
+.bg-royal { background: radial-gradient(circle at 50% 35%, #ffe08a66, transparent 55%), repeating-conic-gradient(from 0deg at 50% 35%, #ffd76a1c 0 8deg, transparent 8deg 22deg), linear-gradient(180deg, #4a1028, #a33a2a 60%, #e0a03a); }
+.bg-north { background: radial-gradient(circle at 50% 35%, #e6fbff77, transparent 55%), radial-gradient(1.5px 1.5px at 20% 30%, #fff, transparent), radial-gradient(1.5px 1.5px at 70% 20%, #fff, transparent), radial-gradient(1px 1px at 40% 60%, #fff, transparent), radial-gradient(1.5px 1.5px at 85% 55%, #fff, transparent), linear-gradient(180deg, #0f2a4a, #2f6f9a 60%, #a8e4ff); }
+.bg-abyss { background: radial-gradient(circle at 50% 40%, #c07bff55, transparent 55%), radial-gradient(ellipse at 20% 90%, #ff3a6a44, transparent 50%), linear-gradient(180deg, #0e0618, #3a1260 55%, #7a2a7a); }
+.bg-temple { background: radial-gradient(circle at 50% 30%, #ffffffcc, transparent 45%), repeating-conic-gradient(from 0deg at 50% 30%, #fff6c430 0 6deg, transparent 6deg 18deg), linear-gradient(180deg, #7ab8e8, #e8f4ff 60%, #ffe9a8); }
+.bg-minion { background: radial-gradient(circle at 50% 35%, #ffffff33, transparent 55%), linear-gradient(180deg, #2a3040, #4a5468 60%, #8a94a8); }
+.hc-cost { position: absolute; left: 6px; top: 6px; z-index: 3; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 16px; color: #2a1a00;
+  background: radial-gradient(circle at 35% 30%, #fff6c0, #ffc93d 45%, #c27a08); box-shadow: 0 0 0 2px #5a3600, 0 3px 6px #000a, inset 0 -3px 4px #0004; }
+.hc-rar { position: absolute; right: 6px; top: 7px; z-index: 3; font-size: 11px; font-weight: 900; font-style: italic; letter-spacing: 1px; padding: 1px 7px; border-radius: 6px; color: #fff; text-shadow: 0 1px 2px #000; }
+.r-ssr .hc-rar { background: linear-gradient(90deg, #ff5ea8, #ffcc4d, #5cf0c8, #6aa8ff, #c07bff, #ff5ea8); background-size: 300% 100%; animation: holo 3s linear infinite; }
+.r-sr .hc-rar { background: linear-gradient(180deg, #ffe08a, #d8901a); color: #3a2200; text-shadow: none; }
+.r-r .hc-rar { background: linear-gradient(180deg, #e8eef8, #8a96aa); color: #1a2030; text-shadow: none; }
+.r-ssr::before { content: ''; position: absolute; inset: 0; border-radius: 14px; z-index: 4; pointer-events: none; mix-blend-mode: color-dodge; opacity: .35;
+  background: linear-gradient(115deg, transparent 30%, #ff9ad8 42%, #fff7b0 50%, #8affea 58%, transparent 70%); background-size: 250% 100%; animation: holoSweep 4.5s ease-in-out infinite; }
+.hc-plate { position: relative; z-index: 2; margin: -22px 6px 0; padding: 4px 6px 3px; text-align: center; border-radius: 8px;
+  background: linear-gradient(180deg, #1c2246f2, #0f1430f2); border: 1px solid color-mix(in srgb, var(--fc) 70%, #fff); box-shadow: 0 3px 10px #000a; }
+.hc-name { font-family: var(--display), "Microsoft JhengHei", serif; font-weight: 900; font-size: 15px; line-height: 1.15; color: #fff; text-shadow: 0 0 8px color-mix(in srgb, var(--fc) 60%, transparent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hc-en { font-size: 8.5px; letter-spacing: 1.5px; color: color-mix(in srgb, var(--fc) 70%, #fff); text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hc-fac { position: absolute; right: 5px; top: -11px; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; background: #0c1024; border: 1px solid color-mix(in srgb, var(--fc) 80%, #fff); color: var(--fc); }
+.hc-stats { display: flex; justify-content: space-around; align-items: center; padding: 4px 4px 5px; font-size: 11.5px; font-weight: bold; color: #dfe4fa; }
+.hc-stats .ty { font-size: 10px; color: var(--muted); font-weight: normal; }
+.hcard.banned { filter: grayscale(1) brightness(.55); }
+.hcard.taken { filter: saturate(.5) brightness(.7); }
+.hcard.taken.p0 { box-shadow: 0 0 0 2px var(--p0), 0 8px 22px #0009; }
+.hcard.taken.p1 { box-shadow: 0 0 0 2px var(--p1), 0 8px 22px #0009; }
+.hcard .ht-mark { z-index: 5; top: 40%; left: 50%; right: auto; transform: translate(-50%, -50%) rotate(-12deg); font-size: 15px; padding: 3px 12px; border: 2px solid currentColor; background: #000c; }
+.hcard.big { --w: min(280px, 72vw); margin: 0 auto 12px; cursor: default; animation: cardReveal .6s var(--ease) both; }
+.hcard.big .hc-name { font-size: 22px; }
+.hcard.big .hc-en { font-size: 11px; }
+.hcard.big .hc-cost { width: 40px; height: 40px; font-size: 22px; }
+.hcard.big .hc-rar { font-size: 14px; }
+.hcard.big .hc-stats { font-size: 14px; padding: 6px; }
+.hcard.big:hover { transform: none; }
+/* 圓形頭像（臉部裁切） */
+.medal.art { position: relative; overflow: hidden; }
+.medal.art img { position: absolute; max-width: none; pointer-events: none; }
+.medal .fb { font-style: normal; }
+.medal.art .fb { display: none; }
+.medal.art.broken img { display: none; }
+.medal.art.broken .fb { display: inline; }
+@keyframes holo { to { background-position: 300% 0; } }
+@keyframes holoSweep { 0%, 100% { background-position: 120% 0; } 50% { background-position: -20% 0; } }
+@keyframes cardReveal { from { opacity: 0; transform: perspective(800px) rotateY(70deg) scale(.85); } }
+
