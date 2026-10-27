@@ -45,12 +45,21 @@ GAME.I18N = (function () {
     return String(s).replace(/\{(\w+)\}/g, (m, k) => (v && v[k] !== undefined && v[k] !== null ? v[k] : m));
   }
 
-  // 介面文字
+  // 介面文字。連中文都找不到的 key：多半是語言檔比程式舊（網站剛更新），交給 GAME.I18N.onMissing 處理（js/ui.js 會自動修復），畫面先顯示 key
   function t(key, v) {
     let s = get(lang, 'ui.' + key);
     if (s === undefined) s = get('zh', 'ui.' + key);
-    if (s === undefined) return key;
+    if (s === undefined) {
+      if (GAME.I18N && typeof GAME.I18N.onMissing === 'function') GAME.I18N.onMissing(key);
+      return key;
+    }
     return fmt(s, v);
+  }
+  // 選填的介面文字（例如 kw_<id>_m 關鍵字字根）：沒有就回傳 undefined，不算缺字
+  function opt(key, v) {
+    let s = get(lang, 'ui.' + key);
+    if (s === undefined) s = get('zh', 'ui.' + key);
+    return s === undefined ? undefined : fmt(s, v);
   }
   // 引擎戰鬥紀錄：中文由引擎自己提供；其他語言找得到就回傳樣板
   function msg(key) { return lang === 'zh' ? undefined : get(lang, 'msg.' + key); }
@@ -101,7 +110,8 @@ GAME.I18N = (function () {
   if (typeof document !== 'undefined') document.documentElement.lang = lang === 'zh' ? 'zh-Hant' : lang;
 
   return {
-    LANGS, add, t, msg, fmt, setLang, packs,
+    LANGS, add, t, opt, msg, fmt, setLang, packs,
+    onMissing: null,   // 找不到介面文字時呼叫 onMissing(key)
     get lang() { return lang; },
     heroName, passive, cardName, cardDesc, statusName, statusDesc, summonName, factionName, typeName, roleName, unitName, codex,
   };

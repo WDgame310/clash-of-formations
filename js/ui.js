@@ -1698,7 +1698,7 @@
       const texts = ALL_UNITS.map(d => ({ d, txt: unitTextLoc(d) }));
       body = `<div class="cx-kws">${list.map(k => {
         // 語言檔可以用 kw_<id>_m 指定比對用的字根（用 | 分隔），例如法文 invoqu 同時對到 Invoque／Invocation
-        const mk = `kw_${k.id}_m`, m = t(mk), terms = (m === mk ? k.n : m).toLowerCase().split('|');
+        const m = I.opt(`kw_${k.id}_m`), terms = (m === undefined ? k.n : m).toLowerCase().split('|');
         const users = texts.filter(x => terms.some(s => x.txt.includes(s))).map(x => x.d);
         return `<div class="cx-kw" data-key="kw-${k.id}"><div class="cx-kw-h"><span>${k.i}</span><b>${k.n}</b></div><p>${k.d}</p>${users.length ? `<div class="cx-chips">${users.map(d => heroChip(d.id)).join('')}</div>` : ''}</div>`;
       }).join('') || `<p class="muted center">${t('cx_no_kw')}</p>`}</div>`;
@@ -2049,6 +2049,16 @@
     swapHints: (S, me, actions) => withState(S, actions, () => swapHints(S, me)),
     cardTags: (S, id) => withState(S, [], () => cardTags(E.CARD[id], false)),
   };
+  // 自動修復：介面文字找不到（例如網站剛更新、瀏覽器還留著舊的語言檔，GitHub Pages 會讓瀏覽器沿用最多 10 分鐘），
+  // 畫面會出現 tut_p_do_unit 這種代號 → 重新下載語言檔與程式，再重新整理一次。只在網站上（http/https）、同一個分頁只試一次
+  if (/^https?:$/.test(location.protocol)) {
+    I.onMissing = () => {
+      if (SS.get('yzdj_heal_v1')) return;
+      SS.set('yzdj_heal_v1', true);
+      const files = ['index.html', 'js/lang/manifest.js', 'js/i18n.js', 'js/ui.js', 'js/tutorial.js'].concat((window.LANG_FILES || []).map(f => 'js/lang/' + f));
+      Promise.all(files.map(f => fetch(f, { cache: 'reload' }).catch(() => {}))).then(() => location.reload());
+    };
+  }
   GAME.UI = { ui, render, test, pwa };
   render();
   registerSW();

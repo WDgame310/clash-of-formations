@@ -1,4 +1,4 @@
-// 發佈版：由 tools/build_pwa.py 從專案根目錄的 sw.js 產生（版本 c86dd6886dcc），請改範本後重新 build，不要直接改這個檔。
+// 發佈版：由 tools/build_pwa.py 從專案根目錄的 sw.js 產生（版本 b3edf54ee27a），請改範本後重新 build，不要直接改這個檔。
 // 異陣對決：Service Worker（安裝成 App 之後，同一台裝置的模式離線也能玩：輪流玩、對戰電腦、圖鑑、筆記）
 //
 // 兩種版本：
@@ -22,7 +22,7 @@
 // - 其他同網域的檔案（不在清單裡）：先給存下的、同時在背景更新；遊戲頁以外的其他頁面：先抓網路、斷線用存下的。
 'use strict';
 
-const VERSION = 'c86dd6886dcc';   // 由 tools/build_pwa.py 產生
+const VERSION = 'b3edf54ee27a';   // 由 tools/build_pwa.py 產生
 const PRECACHE = [
   ["index.html", "45af34e6ebf11273"],
   ["art/manifest.js", "4ddfd65e57a75b0e"],
@@ -39,7 +39,7 @@ const PRECACHE = [
   ["js/data.js", "9238d8b1a2503779"],
   ["js/engine.js", "01044ce974b19fdf"],
   ["js/fx.js", "f772f062c7a01d09"],
-  ["js/i18n.js", "d0904aba7d1bb6fb"],
+  ["js/i18n.js", "be596b04f02f0e6c"],
   ["js/lang/en.codex.js", "b05a2e8d2407a52f"],
   ["js/lang/en.data.js", "78a53804d89cdd0c"],
   ["js/lang/en.msg.js", "b2f3bd7db43de22e"],
@@ -54,7 +54,7 @@ const PRECACHE = [
   ["js/p2p.js", "02d68dc21a9f3974"],
   ["js/peerjs.min.js", "7604d8c31bec4f13"],
   ["js/tutorial.js", "57f392809dca9d70"],
-  ["js/ui.js", "d88583583b405e26"],
+  ["js/ui.js", "29413ee40cd684c8"],
   ["manifest.webmanifest", "f2ef1085ddb2bb3a"]
 ];
 const WARM = ["https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@900&display=swap&text=%E7%95%B0%E9%99%A3%E5%B0%8D%E6%B1%BA%E7%AC%AC%E5%9B%9E%E5%90%88%E9%A0%90%E5%88%A4%E9%98%B2%E7%A6%A6%E9%80%9F%E5%BA%A6%E5%88%A4%E5%AE%9A%E5%87%BA%E6%8B%9B%E6%9C%AB%E7%B5%90%E7%AE%97%E5%8B%9D%E5%88%A9%E5%B9%B3%E6%89%8B%E4%BD%A0%E8%B4%8F%E4%BA%86%E8%BC%B8%E7%A6%81%E7%94%A8%E9%9A%8E%E6%AE%B5%E8%BC%AA%E6%8A%BD%E9%81%B8%E8%A7%92%E7%9B%B2%E5%8D%80%E4%BD%88%E9%99%A3%E6%9A%97%E4%BB%98%E5%B0%8D%E6%88%B0%E7%B5%90%E6%9D%9F%E5%90%8C%E6%99%82%E6%8F%AD%E6%9B%89%E9%96%8B%E5%A7%8B%E8%AB%8B%E6%8A%8A%E8%A3%9D%E7%BD%AE%E4%BA%A4%E7%B5%A6%E4%B8%8B%E4%B8%80%E4%BA%8C%E4%B8%89%E5%9B%9B%E4%BA%94%E5%85%AD%E4%B8%83%E5%85%AB%E4%B9%9D%E5%8D%81%E3%80%81%EF%BC%81"];
